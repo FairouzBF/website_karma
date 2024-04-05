@@ -6,11 +6,25 @@ pipeline {
     }
     agent none
     stages {
-        stage('Build') {
-            steps {
+        stage('Build image') {
+             agent any
+             steps {
                 script {
                   sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG .'
                 }
+             }
+        }
+        stage('Run container based on builded image') {
+            agent any
+            steps {
+               script {
+                 sh '''
+                    echo "Clean Environment"
+                    docker rm -f $IMAGE_NAME || echo "container does not exist"
+                    docker run --name $IMAGE_NAME -d -p ${PORT_EXPOSED}:80 -e PORT=80 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+                    sleep 5
+                 '''
+               }
             }
         }
         stage('Test') {
@@ -22,6 +36,17 @@ pipeline {
                     '''
                 }
            }
+        }
+        stage('Clean Container') {
+            agent any
+            steps {
+                script {
+                    sh '''
+                    docker stop $IMAGE_NAME
+                    docker rm $IMAGE_NAME
+                    '''
+                }
+            }
         }
         stage ('Artifact') {
             agent any
@@ -35,7 +60,7 @@ pipeline {
                     '''
                 }
             }
-        }   
+        }
         stage('Push image in staging and deploy it') {
             when {
                 expression { GIT_BRANCH == 'origin/master' }
