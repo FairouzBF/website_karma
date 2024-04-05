@@ -55,11 +55,4 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            emailext body: 'The Jenkins build is complete.',
-                     subject: 'Jenkins Build Notification',
-                     to: 'chaelyn.kim99@gmail.com'
-        }
-    }
 }
