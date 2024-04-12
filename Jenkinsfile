@@ -1,7 +1,7 @@
 pipeline {
     environment {
         ID_DOCKER = "${ID_DOCKER_PARAMS}"
-        IMAGE_NAME = "alpinehelloworld"
+        IMAGE_NAME = "website-karma"
         IMAGE_TAG = "latest"
     }
     agent none
