@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    curl http://localhost:${PORT_EXPOSED}
+                    curl http://localhost:${PORT_EXPOSED} | grep -q "Deals of the Week"
                     '''
                 }
             }
