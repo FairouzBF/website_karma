@@ -1,10 +1,10 @@
 /* import shared library */
-@Library('shared-library')_
+/* @Library('shared-library')_ */
 
 pipeline {
     environment {
         ID_DOCKER = "${ID_DOCKER_PARAMS}"
-        IMAGE_NAME = "website-karma"
+        IMAGE_NAME = "alpinehelloworld"
         IMAGE_TAG = "latest"
     }
     agent none
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    curl jenkins-docker | grep -q "Hello world!"
+                    curl http://localhost:${PORT_EXPOSED}
                     '''
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
         stage ('Login and Push Image on docker hub') {
             agent any
             environment {
-                DOCKERHUB_PASSWORD  = credentials('dockerhub')
+                DOCKERHUB_PASSWORD  = credentials('159e35f1-8092-4d4b-bd1a-d66088a6d6e0')
             }
             steps {
                 script {
@@ -70,7 +70,7 @@ pipeline {
             }
             agent any
             environment {
-                RENDER_STAGING_DEPLOY_HOOK = credentials('render_api_key_v2')
+                RENDER_STAGING_DEPLOY_HOOK = credentials('render_karma_key')
             }
             steps {
                 script {
