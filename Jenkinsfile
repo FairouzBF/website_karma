@@ -83,6 +83,11 @@ pipeline {
                 }
             }
         }
+        stage('Checkout') {
+            steps {
+                echo checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/FairouzBF/website_karma.git']])
+            }
+        }
     }
     post {
         always {
