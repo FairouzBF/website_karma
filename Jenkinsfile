@@ -1,4 +1,3 @@
-/* testing github hook*/
 /* import shared library */
 @Library('shared-library')_
 
