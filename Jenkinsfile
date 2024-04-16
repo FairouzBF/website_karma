@@ -84,10 +84,10 @@ pipeline {
         }
     }
     post {
-    always {
-         script {
+        always {
+            script {
                 emailNotifier currentBuild.result
             }
-    }  
-  }
+        }
+    }
 }
