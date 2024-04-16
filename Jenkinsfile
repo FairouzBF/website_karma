@@ -1,5 +1,5 @@
 /* import shared library */
-/* testing git hook */
+/* testing again git hook */
 @Library('shared-library')_
 
 pipeline {
