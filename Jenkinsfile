@@ -6,7 +6,6 @@ pipeline {
         ID_DOCKER = "${ID_DOCKER_PARAMS}"
         IMAGE_NAME = "website-karma"
         IMAGE_TAG = "latest"
-        DEFAULT_RECIPIENTS = "fairouz.benfraj@ynov.com"
     }
     agent none
     stages {
