@@ -1,3 +1,5 @@
+FROM --platform=linux/amd64
+
 # Utilisation de l'image NGINX version 1.23.1 avec Alpine comme système d'exploitation
 FROM nginx:1.23.1-alpine
 #test
