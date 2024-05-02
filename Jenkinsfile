@@ -1,83 +1,85 @@
-/* import shared library */
+/* Import de la bibliothèque partagée */
 @Library('shared-library')_
 
 pipeline {
     environment {
-        ID_DOCKER = "${ID_DOCKER_PARAMS}"
-        IMAGE_NAME = "website-karma"
-        IMAGE_TAG = "latest"
+        // Définition des variables d'environnement
+        ID_DOCKER = "${ID_DOCKER_PARAMS}" // ID Docker
+        IMAGE_NAME = "website-karma" // Nom de l'image
+        IMAGE_TAG = "latest" // Tag de l'image
     }
-    agent none
+    agent none // Aucun agent spécifié au niveau global, sera défini au niveau des étapes individuelles
     stages {
-        stage('Build image') {
-            agent any
+        stage('Construction de l'image') {
+            agent any // Tout agent disponible
             steps {
                 script {
-                    sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG .'
+                    // Étape de construction de l'image Docker
+                    sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG .' // Commande Docker pour construire l'image
                 }
             }
         }
-        stage('Run container based on builded image') {
-            agent any
+        stage('Exécution du conteneur basé sur l'image construite') {
+            agent any // Tout agent disponible
             steps {
                 script {
                     sh '''
-                    echo "Clean Environment"
-                    docker rm -f $IMAGE_NAME || echo "container does not exist"
+                    echo "Nettoyer l'environnement"
+                    docker rm -f $IMAGE_NAME || echo "Le conteneur n'existe pas"
                     docker run --name $IMAGE_NAME -d -p ${PORT_EXPOSED}:80 -e PORT=80 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
-                    sleep 5
+                    sleep 5 // Attendre quelques secondes
                     '''
                 }
             }
         }
-        stage('Test image') {
-            agent any
+        stage('Test de l\'image') {
+            agent any // Tout agent disponible
             steps {
                 script {
                     sh '''
-                    curl http://localhost:${PORT_EXPOSED} | grep -q "Deals of the Week"
+                    curl http://localhost:${PORT_EXPOSED} | grep -q "Deals of the Week" // Test de l'image avec curl
                     '''
                 }
             }
         }
-        stage('Clean Container') {
-            agent any
+        stage('Nettoyer le conteneur') {
+            agent any // Tout agent disponible
             steps {
                 script {
                     sh '''
-                    docker stop $IMAGE_NAME
-                    docker rm $IMAGE_NAME
+                    docker stop $IMAGE_NAME // Arrêter le conteneur Docker
+                    docker rm $IMAGE_NAME // Supprimer le conteneur Docker
                     '''
                 }
             }
         }
-        stage ('Login and Push Image on docker hub') {
-            agent any
+        stage ('Connexion et envoi de l'image sur Docker Hub') {
+            agent any // Tout agent disponible
             environment {
-                DOCKERHUB_PASSWORD  = credentials('159e35f1-8092-4d4b-bd1a-d66088a6d6e0')
+                DOCKERHUB_PASSWORD  = credentials('159e35f1-8092-4d4b-bd1a-d66088a6d6e0') // Récupération du mot de passe Docker Hub
             }
             steps {
                 script {
                     sh '''
-                    docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+                    docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG // Commande pour pousser l'image sur Docker Hub
                     '''
                 }
             }
         }    
-        stage('Push image in staging and deploy it') {
+        stage('Pousser l'image en staging et le déployer') {
             when {
-                expression { GIT_BRANCH == 'origin/master' }
+                expression { GIT_BRANCH == 'origin/master' } // Condition pour exécuter cette étape seulement si la branche est master
             }
-            agent any
+            agent any // Tout agent disponible
             environment {
-                RENDER_STAGING_DEPLOY_HOOK = credentials('render_karma_key')
+                RENDER_STAGING_DEPLOY_HOOK = credentials('render_karma_key') // Récupération de la clé de déploiement staging
             }
             steps {
                 script {
                     sh '''
                     echo "Staging"
                     echo $RENDER_STAGING_DEPLOY_HOOK
-                    curl $RENDER_STAGING_DEPLOY_HOOK
+                    curl $RENDER_STAGING_DEPLOY_HOOK // Déployer l'image sur le staging
                     '''
                 }
             }
@@ -86,7 +88,7 @@ pipeline {
     post {
         always {
             script {
-                emailNotifier currentBuild.result
+                emailNotifier currentBuild.result // Appel à la fonction pour notifier par email
             }
         }
     }
