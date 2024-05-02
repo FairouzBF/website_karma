@@ -10,11 +10,12 @@ pipeline {
     }
     agent none // Aucun agent spécifié au niveau global, sera défini au niveau des étapes individuelles
     stages {
-        stage('Build image') {
+        stage('Build image AMD') {
             agent any // Tout agent disponible
             steps {
                 script { // Étape de construction de l'image Docker
-                    sh 'docker builder build --platform linux/amd64,linux/arm64 -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG .' // Commande Docker pour construire l'image
+                    sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG .' // Commande Docker pour construire l'image
+                    sh 'docker builder build --platform linux/amd64 -t ${ID_DOCKER}/$IMAGE_NAME:${IMAGE_TAG}-AMD .' // Commande Docker pour construire l'image
                 }
             }
         }
