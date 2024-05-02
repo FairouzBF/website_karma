@@ -69,7 +69,7 @@ pipeline {
         }    
         stage('Push image in staging and deploy it') {
             when {
-                expression { GIT_BRANCH == 'origin/master' } // Condition pour exécuter cette étape seulement si la branche est master
+                expression { GIT_BRANCH == 'origin/main' } // Condition pour exécuter cette étape seulement si la branche est master
             }
             agent any
             environment {
