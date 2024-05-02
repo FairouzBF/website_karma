@@ -62,8 +62,8 @@ pipeline {
                 script {
                     sh '''
                     docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+                    docker push ${ID_DOCKER}/$IMAGE_NAME:${IMAGE_TAG}-AMD
                     '''
-                    //docker push ${ID_DOCKER}/$IMAGE_NAME:${IMAGE_TAG}-AMD
                 }
             }
         }    
